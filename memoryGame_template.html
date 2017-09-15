@@ -3,23 +3,61 @@
 		<title>Memory Game</title>
 	</head>
 	<body>
+
 		<div id='titleArea'></div>
 		<hr>
 		<div id='gameArea'></div>
 		<div id='buttonArea'></div>
-	
+
 		<script>
-	
-		//constants
+		//------------------------------------------------------------------------------------
+		//Constants
 		SIZE = 52;
 		PAIR = 2;
 		SUITS = new Array('Spade', 'Heart', 'Diamond', 'Club');
-
-		//Variables
-
-		//Functions
-
 		
+
+		//------------------------------------------------------------------------------------
+		//Variables
+		var gameArea = document.getElementById("gameArea");
+		var buttonArea = document.getElementById("buttonArea");
+
+		//Preloads the backCard image
+		var preloadBackCard = new Image();
+		preloadBackCard.src = 'back.gif'
+
+		//Preloads the card images
+		var preloadCards = new Array();
+		for(var i=0; i<52; i++){
+				preloadCards[i] = new Image();
+				preloadCards[i].src = i+'.png';
+			}
+
+		//------------------------------------------------------------------------------------
+		//Functions
+		function setGame() {
+			//Sets up the cards in a HTML table and sets up a unique ID for each card
+			
+			document.writeln("<table>")
+			for (i=0; i<4; i++) {
+				document.writeln("<tr>")
+				for (j=0; j<13; j++) {
+					document.writeln('<td><image id="'+j+i*13+'" src='+preloadBackCard.src+' width="100%"></td>');
+				}
+				document.writeln("</tr");
+			}
+			document.writeln("</table>");
+
+			//Sets up the buttons
+			document.writeln('<input id = "stopGame" type = "button" value="Stop Game"/>');
+			document.writeln('<input id = "showCards" type = "button" value="Show Cards"/>');
+			document.writeln('<input id = "flipCards" type = "button" value="Flip Cards"/>');
+		}
+		
+		//------------------------------------------------------------------------------------
+		//Statements that run when page loads
+		setGame();
+
 		</script>
 	</body>
 </html>
