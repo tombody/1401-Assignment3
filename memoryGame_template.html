@@ -4,59 +4,138 @@
 	</head>
 	<body>
 
-		<div id='titleArea'></div>
+		<div id='titleArea' style="text-align: center"></div>
 		<hr>
 		<div id='gameArea'></div>
-		<div id='buttonArea'></div>
+		<div id='buttonArea' style="text-align: center"></div>
 
 		<script>
-		//------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------
 		//Constants
 		SIZE = 52;
 		PAIR = 2;
 		SUITS = new Array('Spade', 'Heart', 'Diamond', 'Club');
 		
 
-		//------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------
 		//Variables
+		var titleArea = document.getElementById("titleArea");
 		var gameArea = document.getElementById("gameArea");
 		var buttonArea = document.getElementById("buttonArea");
+
+		//Stores the IDs for all 52 cards *TO DO*
+		// var cardSet = [];
+		// for(i=0; i<52; i++){
+		// 	document.writeln("<>")
+		// }
 
 		//Preloads the backCard image
 		var preloadBackCard = new Image();
 		preloadBackCard.src = 'back.gif'
 
 		//Preloads the card images
-		var preloadCards = new Array();
-		for(var i=0; i<52; i++){
-				preloadCards[i] = new Image();
-				preloadCards[i].src = i+'.png';
+		var preloadImages = [];
+		for(i=0; i<52; i++){
+				preloadImages[i] = new Image();
+				preloadImages[i].src = i+'.png';
 			}
 
-		//------------------------------------------------------------------------------------
+		//Stores the IDs of the two cards the player is choosing currently
+		var guessCards = [];
+
+		//Stores the IDs of cards player has guessed correctly
+		var pairCards = []
+
+		//Variables for the HTML divs
+		gameArea = document.getElementById("gameArea");
+
+		//-----------------------------------------------------------------------------
 		//Functions
-		function setGame() {
-			//Sets up the cards in a HTML table and sets up a unique ID for each card
-			
-			document.writeln("<table>")
-			for (i=0; i<4; i++) {
-				document.writeln("<tr>")
-				for (j=0; j<13; j++) {
-					document.writeln('<td><image id="'+j+i*13+'" src='+preloadBackCard.src+' width="100%"></td>');
-				}
-				document.writeln("</tr");
-			}
-			document.writeln("</table>");
 
-			//Sets up the buttons
-			document.writeln('<input id = "stopGame" type = "button" value="Stop Game"/>');
-			document.writeln('<input id = "showCards" type = "button" value="Show Cards"/>');
-			document.writeln('<input id = "flipCards" type = "button" value="Flip Cards"/>');
+		//Sets up the cards in a HTML table and sets up a unique ID for each image
+		function setGame(){
+			//Creates HTML string to insert into gameArea.innerHTML
+			var gameAreaHTML;
+			gameAreaHTML="<table>";
+			for (i=0; i<4; i++){
+				gameAreaHTML+="<tr>";
+				for (j=0; j<13; j++){
+					var id=j+i*13;
+					gameAreaHTML+=('<td><image id="'+id+'" src='+preloadBackCard.src+' width=100% onclick="selectCard(id)"></td>');	
+				}
+				gameAreaHTML+="</tr>";
+			}
+			gameAreaHTML+="</table>";
+			gameArea.innerHTML=gameAreaHTML;
+
+			//Sets up the buttons in buttonArea
+			buttonArea.innerHTML='<input id="stopGame" type="button" value="Stop Game" onclick="stopGame();"/>'
+			buttonArea.innerHTML+= '<input id="showCards" type="button" value="Show Cards" onclick="showCard();"/>'
+			buttonArea.innerHTML+='<input id="flipCards" type="button" value="Flip Cards" onclick="flipCard();"/>'
 		}
+
+		//Turns all cards face up
+		function showCard(cardId){
+			// var imageRef=document.getElementById(cardId);
+			// for(i=0; i<52; i++){
+
+			// }
+		}
+
+		function flipCard(){
+			alert("working");
+		}
+
+		function isPairedCard(){
+
+		}
+
+		function sortCards(){
+
+		}
+
+		function playGame(){
+			//Resets the guess and pair arrays
+			guessCards=[];
+			pairCards=[];
+
+			//Flips all the cards back over
+			//flipCard(0);
+
+			//Resets the timer
+			resetTimer(60);
+		}
+
+		//Reprints the title with the countdown timer
+		function resetTimer(sec){
+			titleArea.innerHTML="<h1>Memory Game (Time Left: "+sec+" seconds)</h1>";
+			var gameTimer=setTimeout(function title(){
+				if(sec>=0){
+					resetTimer(sec)
+				}else{
+					stopGame();
+				}
+			},1000);
+			sec--;
+		}
+
+		function stopGame(){
+			alert("stopGame working");
+		}
+
+		function shuffleCards(){
+
+		}
+
+		function selectCard(cardId){
+			alert(cardId);
+		}		
 		
-		//------------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------
 		//Statements that run when page loads
+
 		setGame();
+		playGame();
 
 		</script>
 	</body>
