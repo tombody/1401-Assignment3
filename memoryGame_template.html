@@ -19,39 +19,76 @@
 
 		//------------------------------------------------------------------------------------
 		//Variables
+		var titleArea = document.getElementById("titleArea");
 		var gameArea = document.getElementById("gameArea");
 		var buttonArea = document.getElementById("buttonArea");
+
+
+		//Stores the IDs for all 52 cards *TO DO*
+		// var cardSet = [];
+		// for(i=0; i<52; i++){
+		// 	document.writeln("<>")
+		// }
 
 		//Preloads the backCard image
 		var preloadBackCard = new Image();
 		preloadBackCard.src = 'back.gif'
 
 		//Preloads the card images
-		var preloadCards = new Array();
-		for(var i=0; i<52; i++){
-				preloadCards[i] = new Image();
-				preloadCards[i].src = i+'.png';
+		var preloadImages = [];
+		for(i=0; i<52; i++){
+				preloadImages[i] = new Image();
+				preloadImages[i].src = i+'.png';
 			}
+
+		//Stores the IDs of the two cards the player is choosing currently
+		var guessCards = [];
+
+		//Stores the IDs of cards player has guessed correctly
+		var pairCards = []
+
+		//Variables for the HTML divs
+		gameArea = document.getElementById("gameArea");
 
 		//------------------------------------------------------------------------------------
 		//Functions
-		function setGame() {
-			//Sets up the cards in a HTML table and sets up a unique ID for each card
-			
-			document.writeln("<table>")
-			for (i=0; i<4; i++) {
-				document.writeln("<tr>")
-				for (j=0; j<13; j++) {
-					document.writeln('<td><image id="'+j+i*13+'" src='+preloadBackCard.src+' width="100%"></td>');
-				}
-				document.writeln("</tr");
-			}
-			document.writeln("</table>");
 
-			//Sets up the buttons
-			document.writeln('<input id = "stopGame" type = "button" value="Stop Game"/>');
-			document.writeln('<input id = "showCards" type = "button" value="Show Cards"/>');
-			document.writeln('<input id = "flipCards" type = "button" value="Flip Cards"/>');
+		//Sets up the cards in a HTML table and sets up a unique ID for each image
+		function setGame(){
+			//Creates a string to insert into the gameArea div
+			var gameAreaHTML;
+			gameAreaHTML="<table>";
+			for (i=0; i<4; i++){
+				gameAreaHTML+="<tr>";
+				for (j=0; j<13; j++){
+					var id=j+i*13;
+					gameAreaHTML+=('<td><image id="'+j+i*13+'" src='+preloadBackCard.src+' width=100%></td>');	
+				}
+				gameAreaHTML+="</tr>";
+			}
+			gameAreaHTML+="</table>";
+			gameArea.innerHTML=gameAreaHTML;
+
+			//Sets up the buttons in buttonArea
+			buttonArea.innerHTML='<input id="stopGame" type="button" value="Stop Game" onclick="stopGame();"/>'
+			buttonArea.innerHTML+= '<input id="showCards" type="button" value="Show Cards" onclick="showCard();"/>'
+			buttonArea.innerHTML+='<input id="flipCards" type="button" value="Flip Cards" onclick="flipCard();"/>'
+
+
+		}
+
+		//Button functions
+
+		function stopGame(){
+			alert("working");
+		}
+
+		function showCard(){
+			alert("working");
+		}
+
+		function flipCard(){
+			alert("working");
 		}
 		
 		//------------------------------------------------------------------------------------
