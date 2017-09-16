@@ -23,11 +23,8 @@
 		var gameArea = document.getElementById("gameArea");
 		var buttonArea = document.getElementById("buttonArea");
 
-		//Stores the IDs for all 52 cards *TO DO*
-		// var cardSet = [];
-		// for(i=0; i<52; i++){
-		// 	document.writeln("<>")
-		// }
+		//Stores the setTimeout object
+		var gameTimer;
 
 		//Preloads the backCard image
 		var preloadBackCard = new Image();
@@ -35,10 +32,14 @@
 
 		//Preloads the card images
 		var preloadImages = [];
+		var cardSet = [];
 		for(i=0; i<52; i++){
 				preloadImages[i] = new Image();
 				preloadImages[i].src = i+'.png';
+				cardSet[i] = document.write("<image id="+i+"src="+preloadImages[i]+">");
 			}
+
+		alert(cardSet);
 
 		//Stores the IDs of the two cards the player is choosing currently
 		var guessCards = [];
@@ -52,7 +53,7 @@
 		//-----------------------------------------------------------------------------
 		//Functions
 
-		//Sets up the cards in a HTML table and sets up a unique ID for each image
+		//Sets up the cards in a HTML table and sets up a unique ID for each image.
 		function setGame(){
 			//Creates HTML string to insert into gameArea.innerHTML
 			var gameAreaHTML;
@@ -94,10 +95,17 @@
 
 		}
 
+		//Starts a new game. Called on startup
 		function playGame(){
+			//
+
+
 			//Resets the guess and pair arrays
 			guessCards=[];
 			pairCards=[];
+
+			//Reshuffles cards
+			//shuffleCards(cardSet);
 
 			//Flips all the cards back over
 			//flipCard(0);
@@ -109,7 +117,7 @@
 		//Reprints the title with the countdown timer
 		function resetTimer(sec){
 			titleArea.innerHTML="<h1>Memory Game (Time Left: "+sec+" seconds)</h1>";
-			var gameTimer=setTimeout(function title(){
+			gameTimer=setTimeout(function counter(){
 				if(sec>=0){
 					resetTimer(sec)
 				}else{
@@ -119,11 +127,12 @@
 			sec--;
 		}
 
+		//Stops the game when the button is clicked or the timer runs out
 		function stopGame(){
-			alert("stopGame working");
+			clearTimeout(gameTimer);
 		}
 
-		function shuffleCards(){
+		function shuffleCards(array){
 
 		}
 
