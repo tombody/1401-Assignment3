@@ -31,13 +31,14 @@
 
 		//Preloads the card images
 		var preloadImages = [];
-		//var cardSet = [];
 		for(i=0; i<52; i++){
 				preloadImages[i] = new Image();
-				preloadImages[i].src = i+'.png';
-				//cardSet[i] = document.write("<image id="+i+"src="+preloadImages[i]+">");
+				preloadImages[i].src = i+'.png';		
 			}
 
+		//Stores the IDs for all the cards
+		var cardSet = [];		
+		
 		//Stores the IDs of the two cards the player is choosing currently
 		var guessCards = [];
 
@@ -51,22 +52,25 @@
 		function setGame(){
 			//Creates HTML string to insert into gameArea.innerHTML
 			var gameAreaHTML;
-			gameAreaHTML="<table>";
+			gameAreaHTML="<table border='1'>";
 			for (i=0; i<4; i++){
 				gameAreaHTML+="<tr>";
 				for (j=0; j<13; j++){
 					var id=j+i*13;
-					gameAreaHTML+=('<td><image id="'+id+'" src='+preloadBackCard.src+' width=100% onclick="selectCard(id)"></td>');	
+					gameAreaHTML+=('<td><image id="'+id+'" src='+preloadBackCard.src+' width=140 onclick="selectCard(id)"></td>');
 				}
 				gameAreaHTML+="</tr>";
 			}
 			gameAreaHTML+="</table>";
 			gameArea.innerHTML=gameAreaHTML;
 
+			//Stores the unique IDs for each card
+			for(i=0; i<52; i++){
+				cardSet[i]=document.getElementById(i);
+			}
+			
 			//Sets up the buttons in buttonArea
-			buttonArea.innerHTML='<input id="stopGame" type="button" value="Stop Game" onclick="stopGame();"/>'
-			buttonArea.innerHTML+= '<input id="showCards" type="button" value="Show Cards" onclick="showCard();"/>'
-			buttonArea.innerHTML+='<input id="flipCards" type="button" value="Flip Cards" onclick="flipCard();"/>'
+			buttonArea.innerHTML='<p> <input id="stopGame" type="button" value="Stop Game" onclick="stopGame();"/> <input id="showCards" type="button" value="Show Cards" onclick="showCard();"/> <input id="flipCards" type="button" value="Flip Cards" onclick="flipCard();"/> </p>'
 		}
 
 		//Turns all cards face up
