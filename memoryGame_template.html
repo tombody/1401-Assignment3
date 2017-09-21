@@ -43,7 +43,7 @@
 		var guessCards = [];
 
 		//Stores the IDs of cards player has guessed correctly
-		var pairCards = []
+		var pairedCards = []
 
 		//-----------------------------------------------------------------------------
 		//Functions
@@ -75,18 +75,25 @@
 
 		//Turns all cards face up
 		function showCard(cardId){
-			// var imageRef=document.getElementById(cardId);
-			// for(i=0; i<52; i++){
 
-			// }
 		}
 
-		function flipCard(){
-			alert("working");
+		function flipCard(cardID){
+			// document.getElementById(cardID);
+			// if(isPairedCard(cardID)){
+			// } else{
+			// };
 		}
 
-		function isPairedCard(){
-
+		//Checks if a card is in the collection of found paired cards
+		function isPairedCard(cardID){		
+			for(i=0;i<pairedCards.length;i++){
+				if (pairCards[i]==cardID){
+					return true
+				} else{
+					return false
+				}
+			}
 		}
 
 		function sortCards(){
