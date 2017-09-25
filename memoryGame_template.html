@@ -15,6 +15,7 @@
 		SIZE = 52;
 		PAIR = 2;
 		SUITS = new Array('Spade', 'Heart', 'Diamond', 'Club');
+		RANKS = new Array('Ace','2','3','4','5','6','7','8','9','10','Jack','Queen','King');
 		
 		//-----------------------------------------------------------------------------
 		//Variables
@@ -31,7 +32,7 @@
 
 		//Preloads the card images
 		var preloadImages = [];
-		for(i=0; i<52; i++){
+		for(i=0; i<SIZE; i++){
 				preloadImages[i] = new Image();
 				preloadImages[i].src = i+'.png';		
 			}
@@ -43,7 +44,7 @@
 		var guessCards = [];
 
 		//Stores the IDs of cards player has guessed correctly
-		var pairedCards = []
+		var pairedCards = [];
 
 		//-----------------------------------------------------------------------------
 		//Functions
@@ -65,36 +66,74 @@
 			gameArea.innerHTML=gameAreaHTML;
 
 			//Stores the unique IDs for each card
-			for(i=0; i<52; i++){
+			for(i=0; i<SIZE; i++){
 				cardSet[i]=document.getElementById(i);
 			}
 			
 			//Sets up the buttons in buttonArea
-			buttonArea.innerHTML='<p> <input id="stopGame" type="button" value="Stop Game" onclick="stopGame();"/> <input id="showCards" type="button" value="Show Cards" onclick="showCard();"/> <input id="flipCards" type="button" value="Flip Cards" onclick="flipCard();"/> </p>'
+			buttonArea.innerHTML='<p> <input id="stopGame" type="button" value="Stop Game" onclick="stopGame();"/> <input id="showCards" type="button" value="Show Cards" onclick="showCard(0);"/> <input id="flipCards" type="button" value="Flip Cards" onclick="flipCard(0);"/> </p>'
 		}
 
-		//Turns all cards face up
+		//Turns all cards face up with a small pause between each flip
 		function showCard(cardId){
-
+			if(cardId<SIZE){
+				var imageRef=document.getElementById(cardId);
+				imageRef.src=preloadImages[cardId].src;
+				cardId++;
+				//Animates the flip card every 10 milliseconds
+				t = setTimeout(function(){
+					showCard(cardId)
+				}, 10);
+			}
 		}
 
-		function flipCard(cardID){
-			// imageRef=document.getElementById(cardId);
-			// if(pairedCards.indexOf(cardId))
+		//Flips cards back over if they haven't been paired already
+		function flipCard(cardId){
+			if(cardId<SIZE){
+				var imageRef=document.getElementById(cardId);
+
+				//Checks to see if card has been paired already
+				//If it isn't a paired card, flip the card
+				if(!isPairedCard(cardId)){
+					imageRef.src=preloadBackCard.src;
+				}
+				cardId++;
+				//Animates the flip card every 10 milliseconds
+				t = setTimeout(function(){
+					flipCard(cardId)
+				}, 10);
+			}
 		}
 
 		//Checks if a card is in the collection of found paired cards
-		function isPairedCard(cardID){		
-			for(i=0;i<pairedCards.length;i++){
-				if (pairCards[i]==cardID){
+		//If found, return true, if not, return false
+		function isPairedCard(cardId){
+			//cardId has to be converted to string since pairedCard 
+			//elements are strings and not numbers		
+			if(pairedCards.indexOf(String(cardId))>-1){
 					return true
 				} else{
 					return false
 				}
-			}
 		}
 
-		function sortCards(){
+		function sortCards(cardsToSort){
+			//Sorting the paired cards using the bubblesort algorithm
+			//--------------NOT SORTING CARDS PROPERLY---------------------
+			var i;
+			var j;
+			var temp;
+
+			for(i=0; i<cardsToSort.length-1; i++){
+				for(j=0; j<cardsToSort.length-1; j++){
+					if(cardsToSort[j]>cardsToSort[j+1]){
+						temp=cardsToSort[j];
+						cardsToSort[j]=cardsToSort[j+1];
+						cardsToSort[j+1]=temp;
+					}
+				}
+			}
+
 
 		}
 
@@ -106,7 +145,7 @@
 
 			//Resets the guess and pair arrays
 			guessCards=[];
-			pairCards=[];
+			pairedCards=[];
 
 			//Reshuffles cards
 			//shuffleCards(cardSet);
@@ -133,25 +172,52 @@
 
 		//Stops the game when the button is clicked or the timer runs out
 		function stopGame(){
+			var displayMsg;
+
+			//Stops the timer
 			clearTimeout(gameTimer);
+
+			//Not sure about this yet
+			sortedCards=pairedCards;
+			
+			//Sorts the cards 
+			alert(sortedCards);
+			sortCards(sortedCards);
+			alert(sortedCards);
+
+			//Displays the results 
+			//-------------SUITS NOT WORKING------------------
+			displayMsg="You have found "+pairedCards.length/2+" pairs:\n\n"
+			for(i=0; i<sortedCards.length; i=i+2){
+				displayMsg+=SUITS[sortedCards[i]%4]+"-"+RANKS[sortedCards[i]%13];
+				displayMsg+=" -- ";
+				displayMsg+=SUITS[sortedCards[i+1]%4]+"-"+RANKS[sortedCards[i+1]%13]+"\n";
+			}
+			alert(displayMsg);
+
+			//Prepares a new game for the next session
+			//playGame();
 		}
 
+		//---------------------TO DO---------------------------------
 		function shuffleCards(array){
 
 		}
 
 		//Flips cards over and determines pairs on user click
 		function selectCard(cardId){
-			//checks if card is in pairedCards
+			//Stores the image reference
+			var imageRef;
+			
+			//Checks if card is not in pairedCards
 			if(pairedCards.indexOf(cardId)==-1){
-				//Gets the image reference
 				imageRef=document.getElementById(cardId);
 				//Changes the source image
 				imageRef.src=preloadImages[cardId].src;
 				
 				//Pushes the array to guessCards if it's the first guess
 				//or it's the second and  it doesn't match the first card
-				if(guessCards.length<2&&guessCards[0]!=cardId){
+				if(guessCards.length<2 && guessCards[0]!=cardId){
 					guessCards.push(cardId);
 				} 
 
