@@ -79,10 +79,8 @@
 		}
 
 		function flipCard(cardID){
-			// document.getElementById(cardID);
-			// if(isPairedCard(cardID)){
-			// } else{
-			// };
+			// imageRef=document.getElementById(cardId);
+			// if(pairedCards.indexOf(cardId))
 		}
 
 		//Checks if a card is in the collection of found paired cards
@@ -123,7 +121,7 @@
 		//Reprints the title with the countdown timer
 		function resetTimer(sec){
 			titleArea.innerHTML="<h1>Memory Game (Time Left: "+sec+" seconds)</h1>";
-			gameTimer=setTimeout(function counter(){
+			gameTimer=setTimeout(function(){
 				if(sec>=0){
 					resetTimer(sec)
 				}else{
@@ -142,8 +140,46 @@
 
 		}
 
+		//Flips cards over and determines pairs on user click
 		function selectCard(cardId){
-			alert(cardId);
+			//checks if card is in pairedCards
+			if(pairedCards.indexOf(cardId)==-1){
+				//Gets the image reference
+				imageRef=document.getElementById(cardId);
+				//Changes the source image
+				imageRef.src=preloadImages[cardId].src;
+				
+				//Pushes the array to guessCards if it's the first guess
+				//or it's the second and  it doesn't match the first card
+				if(guessCards.length<2&&guessCards[0]!=cardId){
+					guessCards.push(cardId);
+				} 
+
+				if(guessCards.length==2){
+					//Checks the cards value
+					var cardRank1=guessCards[0]%13;
+					var cardRank2=guessCards[1]%13;
+
+					//If the cards are the same then add to pairedCards
+					//else flip them back over
+					if(cardRank1==cardRank2){
+						pairedCards.push(guessCards[0]);
+						pairedCards.push(guessCards[1]);
+					} else{
+						imageRef1=document.getElementById(guessCards[0]);
+						imageRef2=document.getElementById(guessCards[1]);
+
+						//Animates the cardflip
+						setTimeout(function(){
+							imageRef1.src=preloadBackCard.src;
+							imageRef2.src=preloadBackCard.src;
+						},300);
+					}
+
+					//Resets guessCards
+					guessCards = [];
+				}
+			}
 		}		
 		
 		//-----------------------------------------------------------------------------
