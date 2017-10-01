@@ -48,7 +48,9 @@
 		//-----------------------------------------------------------------------------
 		//Functions
 
-		//Sets up the cards in a HTML table and sets up a unique ID for each image.
+		/**
+		* Sets up the cards in a HTML table and sets up a unique ID for each image.
+		*/
 		function setGame(){
 			//HTML string to insert into gameArea.innerHTML
 			var gameAreaHTML;
@@ -69,7 +71,11 @@
 			buttonArea.innerHTML='<p> <input id="stopGame" type="button" value="Stop Game" onclick="stopGame();"/> <input id="showCards" type="button" value="Show Cards" onclick="showCard(0);"/> <input id="flipCards" type="button" value="Flip Cards" onclick="flipCard(0);"/> </p>'
 		}
 
-		//Turns all cards face up with a small pause between each flip
+		/**
+		* Turns all cards face up with a small pause between each flip.
+		*
+		* @param cardId
+		*/
 		function showCard(cardId){
 			cardsAreShowing=true;
 			if(cardId<SIZE){
@@ -83,7 +89,11 @@
 			}
 		}
 
-		//Flips cards back over if they haven't been paired already
+		/**
+		* Flips cards back over if they haven't been paired already
+		*
+		* @param cardId
+		*/
 		function flipCard(cardId){
 			cardsAreShowing=false;;
 			if(cardId<SIZE){
@@ -101,11 +111,15 @@
 				}, 10);
 			}
 		}
-
-		//Checks if a card is in the collection of found paired cards
-		//If found, return true, if not, return false
+		
+		/**
+		* Checks if a card is in the list of found paired cards.
+		*
+		* @param cardId 	The id of the card to look for in pairedCards
+		* @return			True if card is found, false if not.
+		*/
 		function isPairedCard(cardId){
-			//cardId has to be converted to string since pairedCard 
+			//cardId has to be converted to string since pairedCards 
 			//elements are strings and not numbers		
 			if(pairedCards.indexOf(String(cardId))>-1){
 					return true
@@ -121,11 +135,11 @@
 			var temp;
 
 			for (i = 0; i<cardSet.length-1; i++){
-				for (j=0; j<(cardSet.length-1)%13; j++){
-					if (cardSet[j%13] > cardSet[(j+1)%13]){
-						temp = cardSet[j%13];
-						cardSet[j%13] = cardSet[(j+1)%13];
-						cardSet[(j+1)%13] = temp;
+				for (j=0; j<(cardSet.length-1); j++){
+					if (cardSet[j]%13 > cardSet[(j+1)]%13){
+						temp = cardSet[j];
+						cardSet[j] = cardSet[(j+1)];
+						cardSet[(j+1)] = temp;
 					}
 				}
 			}
@@ -177,6 +191,10 @@
 			clearTimeout(gameTimer);
 
 			sortedCards=pairedCards;
+			//Converts the cardIds to number from string
+			for(i=0;i<sortedCards.length;i++){
+				sortedCards[i]=Number(sortedCards[i]);
+			}
 			
 			//Sorts the cards 
 			sortCards(sortedCards);
