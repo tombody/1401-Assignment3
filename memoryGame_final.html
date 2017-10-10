@@ -1,0 +1,330 @@
+<html>
+	<head>
+		<title>Memory Game</title>
+	</head>
+	<body>
+
+		<div id='titleArea' style="text-align: center"></div>
+		<hr>
+		<div id='gameArea'></div>
+		<div id='buttonArea' style="text-align: center"></div>
+
+		<script>
+		//-----------------------------------------------------------------------------
+		//Constants
+		const SIZE = 52;
+		const PAIR = 2;
+		const SUITS = new Array('Spade', 'Heart', 'Diamond', 'Club');
+		const RANKS = new Array('Ace','2','3','4','5','6','7','8','9','10','Jack','Queen','King');
+		
+		//-----------------------------------------------------------------------------
+		//Variables
+		var titleArea = document.getElementById("titleArea");
+		var gameArea = document.getElementById("gameArea");
+		var buttonArea = document.getElementById("buttonArea");
+
+		//Stores the setTimeout object
+		var gameTimer;
+
+		//Preloads the backCard image
+		var preloadBackCard = new Image();
+		preloadBackCard.src = 'back.gif'
+
+		//Stores the preloaded the card images
+		var preloadImages = [];
+
+		//Stores the IDs for all the cards
+		var cardSet = [];		
+		
+		//Stores the IDs of the two cards the player is choosing currently
+		var guessCards = [];
+
+		//Stores the IDs of cards player has guessed correctly
+		var pairedCards = [];
+
+		//Used to ensure users can't select cards while face up
+		var cardsAreShowing=false;
+
+		//-----------------------------------------------------------------------------
+		//Functions
+
+		/**
+		* Sets up the cards in a HTML table and sets up a unique ID for each image.
+		*/
+		function setGame(){
+			//HTML string to insert into gameArea.innerHTML
+			var gameAreaHTML;
+
+			gameAreaHTML="<table border='1'>";
+			for (i=0; i<4; i++){
+				gameAreaHTML+="<tr>";
+				for (j=0; j<13; j++){
+					var id=j+i*13;
+					gameAreaHTML+=('<td><image id="'+id+'" src='+preloadBackCard.src+' width=120 onclick="selectCard(id)"></td>');
+				}
+				gameAreaHTML+="</tr>";
+			}
+			gameAreaHTML+="</table>";
+			gameArea.innerHTML=gameAreaHTML;
+			
+			//Sets up the buttons in buttonArea
+			buttonArea.innerHTML='<p> <input id="stopGame" type="button" value="Stop Game" onclick="stopGame();"/> <input id="showCards" type="button" value="Show Cards" onclick="showCard(0);"/> <input id="flipCards" type="button" value="Flip Cards" onclick="flipCard(0);"/> </p>'
+		}
+
+		/**
+		* 	Turns all cards face up with a small pause between each flip.
+		*
+		* 	@param cardId 	The div id of the card to be shown face up.
+		*/
+		function showCard(cardId){
+			cardsAreShowing=true;
+			if(cardId<SIZE){
+				var imageRef=document.getElementById(cardId);
+				imageRef.src=preloadImages[cardSet[cardId].id].src;
+				cardId++;
+				//Animates the flip card every 10 milliseconds
+				t = setTimeout(function(){
+					showCard(cardId)
+				}, 10);
+			}
+		}
+
+		/**
+		* 	Flips cards back over if they haven't been paired already.
+		*
+		* 	@param cardId  	The div id of the card to be flipped.
+		*/
+		function flipCard(cardId){
+			cardsAreShowing=false;;
+			if(cardId<SIZE){
+				var imageRef=document.getElementById(cardId);
+
+				//Checks to see if card has been paired already
+				//If it isn't a paired card, flip the card
+				if(!isPairedCard(cardSet[cardId].id)){
+					imageRef.src=preloadBackCard.src;
+				}
+				cardId++;
+				//Animates the flip card every 10 milliseconds
+				t = setTimeout(function(){
+					flipCard(cardId)
+				}, 10);
+			}
+		}
+		
+		/**
+		* 	Checks if a card is in the list of found paired cards.
+		*
+		* 	@param cardId 	The id of the card to look for in pairedCards.
+		* 	@return			True if card is found, false if not.
+		*/
+		function isPairedCard(cardId){
+			//cardId has to be converted to string since pairedCards 
+			//elements are strings and not numbers		
+			if(pairedCards.indexOf(String(cardId))>-1){
+					return true
+				} else{
+					return false
+				}
+		}
+		
+		/**
+		* 	Sorts the paired cards using the bubblesort algorithm.
+		*
+		* 	@param cardSet 	Array of card div ids which have been added to the 
+		*					pairedCards array.
+		*/
+		function sortCards(cardSet){
+			//Sorting the paired cards using the bubblesort algorithm
+			var i;
+			var j;
+			var temp;
+
+			for (i = 0; i<cardSet.length-1; i++){
+				for (j=0; j<(cardSet.length-1); j++){
+					if (cardSet[j]%13 > cardSet[(j+1)]%13){
+						temp = cardSet[j];
+						cardSet[j] = cardSet[(j+1)];
+						cardSet[(j+1)] = temp;
+					}
+				}
+			}
+		}
+
+		/**
+		* 	Starts a new game. Called at startup.		
+		*/
+		function playGame(){
+			//Preloads the card images
+			for(i=0; i<SIZE; i++){
+					preloadImages[i] = new Image();
+					preloadImages[i].src = i+'.png';
+
+					//Stores the unique IDs for each card
+					cardSet[i]=document.getElementById(i);		
+				}
+
+			//Resets the guess and pair arrays
+			guessCards=[];
+			pairedCards=[];
+
+			//Shuffles or re-shuffles cards
+			shuffleCards(cardSet);
+
+			//Flips all the cards back over
+			flipCard(0);
+
+			//Resets the timer
+			resetTimer(60);
+		}
+		
+		/**
+		*	Starts or resets a timer with sec seconds which tick down second by second.
+		*
+		*	@param sec 		A number value, in seconds, and presents via the title header
+		*	"Time Left".
+		*/
+		function resetTimer(sec){
+			titleArea.innerHTML="<h1>Memory Game (Time Left: "+sec+" seconds)</h1>";
+			gameTimer=setTimeout(function(){
+				if(sec>=0){
+					resetTimer(sec)
+				}else{
+					stopGame();
+				}
+			},1000);
+			sec--;
+		}
+		
+		/**
+		* 	Stops the game when the stop button is clicked or the timer runs out.
+		*/
+		function stopGame(){
+			var displayMsg;
+
+			//Stops the timer
+			clearTimeout(gameTimer);
+
+			sortedCards=pairedCards;
+
+			//Converts the cardIds to number from string
+			for(i=0;i<sortedCards.length;i++){
+				sortedCards[i]=Number(sortedCards[i]);
+			}
+			
+			//Sorts the cards 
+			sortCards(sortedCards);
+
+			//Displays the results 
+			displayMsg="You have found "+pairedCards.length/2+" pairs:\n\n"
+			for(i=0; i<sortedCards.length; i=i+2){
+				//Finds the correct suit for each card
+				var suit1;
+				var suit2;
+
+				if(sortedCards[i]<13){
+					suit1=0;
+				}else if(sortedCards[i]<26){
+					suit1=1;
+				}else if(sortedCards[i]<39){
+					suit1=2;
+				}else if(sortedCards[i]<52){
+					suit1=3;
+				}
+
+				if(sortedCards[i+1]<13){
+					suit2=0;
+				}else if(sortedCards[i+1]<26){
+					suit2=1;
+				}else if(sortedCards[i+1]<39){
+					suit2=2;
+				}else if(sortedCards[i+1]<52){
+					suit2=3;
+				}
+
+				displayMsg+=SUITS[suit1]+"-"+RANKS[sortedCards[i]%13];
+				displayMsg+=" -- ";
+				displayMsg+=SUITS[suit2]+"-"+RANKS[sortedCards[i+1]%13]+"\n";
+
+			}
+			alert(displayMsg);
+
+			//Prepares a new game for the next session
+			playGame();
+		}
+
+		/**
+		* 	Shuffles the values in the cardSet array using a standard triangular swap plan.
+		* 
+		* 	@param cardSet	The full set of 52 card div ids.
+		*/
+		function shuffleCards(cardSet){
+			var elementsRemaining = cardSet.length;
+			var iRnd = 0;
+						
+			while (elementsRemaining > 1){
+				iRnd = Math.floor(Math.random()*(elementsRemaining-1));
+				temp = cardSet[iRnd];
+				cardSet[iRnd] = cardSet[elementsRemaining-1];
+				cardSet[elementsRemaining-1] = temp;
+				elementsRemaining--;
+			}
+		}
+		
+		
+		/**
+		* 	Flips cards over and determines pairs on user click
+		* 
+		* 	@param cardId		The div id of the selected card.
+		*/
+		function selectCard(cardId){
+			//Stores the image reference
+			var imageRef=document.getElementById(cardId);
+			
+			//Checks if card is not in pairedCards
+			//Does not run when cards are face up
+			if(pairedCards.indexOf(cardSet[cardId].id)==-1
+				&&!cardsAreShowing){
+				
+				//Changes the source image
+				imageRef.src=preloadImages[cardSet[cardId].id].src;
+				
+				//Pushes the array to guessCards if it's the first guess
+				//or it's the second and  it doesn't match the first card
+				if(guessCards.length<2&&guessCards[0]!=cardId){
+					guessCards.push(cardId);
+				} 
+				if(guessCards.length==2){
+					//Checks the cards value
+					var cardRank1=cardSet[guessCards[0]].id%13;
+					var cardRank2=cardSet[guessCards[1]].id%13;
+
+					//If the cards are the same then add to pairedCards
+					//else flip them back over
+					if(cardRank1==cardRank2){
+						pairedCards.push(cardSet[guessCards[0]].id);
+						pairedCards.push(cardSet[guessCards[1]].id);
+					} else{
+						imageRef1=document.getElementById(guessCards[0]);
+						imageRef2=document.getElementById(guessCards[1]);
+						//Animates the cardflip
+						setTimeout(function(){
+							imageRef1.src=preloadBackCard.src;
+							imageRef2.src=preloadBackCard.src;
+						},300);
+					}
+					//Resets guessCards
+					guessCards = [];
+				}
+			}
+		}		
+		
+		//-----------------------------------------------------------------------------
+		//Statements that run when page loads
+
+		setGame();
+		playGame();
+
+		</script>
+	</body>
+</html>
